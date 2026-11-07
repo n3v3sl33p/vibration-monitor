@@ -1,0 +1,13 @@
+[project]
+name = "vibration-monitor"
+version = "0.2.0"
+description = "Учебная система мониторинга вибрации виртуального электродвигателя"
+requires-python = ">=3.11"
+dependencies = ["numpy>=2,<3", "pandas>=2,<3", "streamlit>=1.67,<2", "plotly>=5,<7"]
+
+[dependency-groups]
+dev = ["pytest>=8,<10"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]

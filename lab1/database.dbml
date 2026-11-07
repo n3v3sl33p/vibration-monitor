@@ -1,0 +1,36 @@
+Table equipment {
+  id integer [pk, increment]
+  name text [not null]
+}
+
+Table measurement_run {
+  id integer [pk, increment]
+  equipment_id integer [not null]
+  created_at text [not null, note: 'UTC, ISO 8601']
+  role text [not null, note: 'train | validation | test | demo']
+  config_json text [not null, note: 'Параметры генератора, АЦП, EMA, окон, признаков и анализа; без ключа']
+  signal_token text [not null, note: 'Fernet: JSON с временем, исходным, квантованным, обработанным сигналом и маской аномалий']
+
+  checks {
+    `role IN ('train', 'validation', 'test', 'demo')`
+  }
+}
+
+Table window_result {
+  id integer [pk, increment]
+  run_id integer [not null]
+  start_sample integer [not null, note: 'Включительно']
+  end_sample integer [not null, note: 'Не включительно']
+  result_token text [not null, note: 'Fernet: JSON с пятью признаками, ml_score, ml_flag, baseline_flag, y_true; оценки/решения null до применения модели']
+
+  indexes {
+    (run_id, start_sample) [unique]
+  }
+  checks {
+    `start_sample >= 0`
+    `end_sample > start_sample`
+  }
+}
+
+Ref: measurement_run.equipment_id > equipment.id [delete: restrict]
+Ref: window_result.run_id > measurement_run.id [delete: restrict]
